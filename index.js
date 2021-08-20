@@ -42,6 +42,23 @@ class Airplane {
 */
 
 class Person {
+  constructor(name, age) {
+    this.name = name;
+    this.age = age;
+    this.stomach = [];
+  }
+  eat(food) {
+    if (this.stomach.length < 10) {
+      this.stomach.push(food);
+    }
+  }
+  toString () {
+    return this.name + ", " + this.age;
+  }
+
+  poop () {
+    this.stomach = [];
+  }
   
 }
 
@@ -60,6 +77,30 @@ class Person {
 */
 
 class Car {
+  constructor(model, milesPerGallon) {
+    this.model = model;
+    this.milesPerGallon = milesPerGallon;
+    this.tank = 0;
+    this.odometer = 0;
+  }
+
+
+  fill(gal) {
+    this.tank += gal;
+  }
+
+  drive (distance) {
+    let usage = distance / this.milesPerGallon;
+    if (usage < this.tank ) {
+      this.odometer += distance;
+          this.tank -= usage;
+    } else {
+      this.odometer += usage * this.milesPerGallon - 1;
+      this.tank = 0;
+      return "I ran out of fuel at " + this.odometer + " miles!"
+    }
+
+  }
   
 }
 
@@ -76,7 +117,15 @@ class Car {
         + {name} and {location} of course come from the instance's own properties.
 */
 class Lambdasian {
-  
+  constructor(object) {
+    this.name = object.name;
+    this.age = object.age;
+    this.location = object.location;
+  }
+
+  speak(){
+    return "Hello my name is " + this.name + ", I am from " + this.location;
+  }
 }
 
 /*
@@ -93,8 +142,25 @@ class Lambdasian {
         + `demo` receives a `subject` string as an argument and returns the phrase 'Today we are learning about {subject}' where subject is the param passed in.
         + `grade` receives a `student` object and a `subject` string as arguments and returns '{student.name} receives a perfect score on {subject}'
 */
-class Instructor {
 
+class Instructor{
+  constructor (object) {
+    Lambdasian.call(this, object);
+    this.specialty = object.specialty;
+    this.favLanguage = object.favLanguage;
+    this.catchPhrase = object.catchPhrase;
+  }
+
+}
+
+Instructor.prototype = Object.create(Lambdasian.prototype);
+
+Instructor.prototype.demo = function (subject) {
+  return "Today we are learning about " + subject;
+}
+
+Instructor.prototype.grade = function (student, subject) {
+return student.name + " receives a perfect score on " + subject;
 }
 /*
   TASK 5
@@ -112,9 +178,28 @@ class Instructor {
         + `sprintChallenge` similar to PRAssignment but returns `student.name has begun sprint challenge on {subject}`
 */
 class Student {
-   
+   constructor(object) {
+     Lambdasian.call(this, object);
+     this.previousBackground = object.previousBackground;
+     this.className = object.className;
+     this.favSubjects = object.favSubjects;
+   }
 }
 
+Student.prototype = Object.create(Lambdasian.prototype);
+
+
+Student.prototype.listSubjects = function () {
+  return this.favSubjects;
+}
+
+Student.prototype.PRAssignment = function (subject) {
+return this.name + " has submitted a PR for " + subject;
+}
+
+Student.prototype.sprintChallenge = function (subject) {
+  return this.name + " has begun sprint challenge on " + subject;
+}
 /*
   TASK 6
     - Write a ProjectManager class extending Instructor.
@@ -129,8 +214,23 @@ class Student {
         + `debugsCode` a method that takes in a student object and a subject and returns `{name} debugs {student.name}'s code on {subject}`
 */
 class ProjectManager {
-   
+  constructor(object) {
+    Instructor.call(this, object);
+    this.gradClassName = object.gradClassName;
+    this.favInstructor = object.favInstructor;
+  }
 }
+
+ProjectManager.prototype = Object.create(Instructor.prototype);
+
+ProjectManager.prototype.standUp = function (channel) {
+  return this.name + " announces to " + channel + " @channel study times!";
+}
+
+ProjectManager.prototype.debugsCode = function (newStudent, subject) {
+  return this.name + " debugs " + newStudent.name + "'s code on " + subject;
+}
+
 /*
   STRETCH PROBLEM (no tests!)
     - Extend the functionality of the Student by adding a prop called grade and setting it equal to a number between 1-100.
